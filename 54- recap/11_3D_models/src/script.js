@@ -1,5 +1,7 @@
 import * as THREE from "three";
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
+import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
+import { DRACOLoader } from "three/addons/loaders/DRACOLoader.js";
 import { Pane } from "tweakpane";
 
 // initialize the pane
@@ -8,6 +10,11 @@ const pane = new Pane();
 // add loaders
 const cubeTextureLoader = new THREE.CubeTextureLoader();
 cubeTextureLoader.setPath("textures/");
+
+const gltfLoader = new GLTFLoader();
+const dracoLoader = new DRACOLoader()
+dracoLoader.setDecoderPath( '/draco/' )
+gltfLoader.setDRACOLoader(dracoLoader)
 
 // initialize the scene
 const scene = new THREE.Scene();
@@ -23,8 +30,27 @@ const envMap = cubeTextureLoader.load([
 ]);
 
 scene.background = envMap;
+scene.environment = envMap;
 
 // add stuff here
+gltfLoader.load("/models/boomBoxDraco/BoomBox.gltf", (gltf) => {
+  const modelScene = gltf.scene;
+  modelScene.scale.setScalar(50)
+  modelScene.traverse((child) => {
+    if (child.isMesh) {
+      child.material.envMapIntensity = 1.5;
+    }
+  });
+  scene.add(modelScene);
+});
+
+// add the lights
+const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
+scene.add(ambientLight);
+
+const directionalLight = new THREE.DirectionalLight(0xffffff, 0.5);
+directionalLight.position.set(2,2,2);
+scene.add(directionalLight);
 
 // initialize the camera
 const camera = new THREE.PerspectiveCamera(
