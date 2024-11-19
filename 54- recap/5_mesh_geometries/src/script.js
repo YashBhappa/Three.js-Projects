@@ -5,10 +5,27 @@ import { OrbitControls } from "three/addons/controls/OrbitControls.js";
 const scene = new THREE.Scene();
 
 // add objects to the scene
-const cubeGeometry = new THREE.BoxGeometry(1, 1, 1);
-const cubeMaterial = new THREE.MeshBasicMaterial({ color: "red", wireframe: true });
-const cubeMesh = new THREE.Mesh(cubeGeometry, cubeMaterial);
 
+// Create a custom geometry
+const vertices = new Float32Array([
+  0, 0, 0, // 0
+  0, 1, 0, // 1
+  1, 0, 0, // 2
+])
+
+// const geometry = new THREE.SphereGeometry(1, 32, 32);
+// const geometry = new IcosahedronGeometry(1, 3)
+// const geometry = new THREE.TorusGeometry(1, 0.3, 16, 100);
+// const geometry = new THREE.PlaneGeometry(1, 1, 4, 4);
+
+const geometry = new THREE.BufferGeometry()
+const bufferAttribute = new THREE.BufferAttribute(vertices, 3)
+console.log(bufferAttribute)
+geometry.setAttribute('position', bufferAttribute)
+
+
+const cubeMaterial = new THREE.MeshBasicMaterial({ color: "red", wireframe: true });
+const cubeMesh = new THREE.Mesh(geometry, cubeMaterial);
 scene.add(cubeMesh);
 
 // initialize the camera
